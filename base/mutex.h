@@ -46,7 +46,7 @@ class atomic_flag {
 public:
 	atomic_flag() {
 	}
-
+	
 	atomic_flag(const atomic_flag_init &v) : value(0) {
 	}
 
