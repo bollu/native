@@ -99,11 +99,15 @@ struct Theme {
 	int dropShadow4Grid;
 
 	Style buttonStyle;
+	//use the alternate style to alternate colors between 2 UI elements
+	Style buttonStyleAlternate;
 	Style buttonFocusedStyle;
 	Style buttonDownStyle;
 	Style buttonDisabledStyle;
 
 	Style itemStyle;
+	//use the alternate style to alternate colors between 2 UI elements
+	Style itemStyleAlternate;
 	Style itemDownStyle;
 	Style itemFocusedStyle;
 	Style itemDisabledStyle;
@@ -411,14 +415,20 @@ protected:
 
 class Button : public Clickable {
 public:
-	Button(const std::string &text, LayoutParams *layoutParams = 0)
-		: Clickable(layoutParams), text_(text) {}
+	Button(const std::string &text, LayoutParams *layoutParams = 0, bool altStyle = false)
+		: Clickable(layoutParams), text_(text), altStyle_(altStyle) {};
+
+	Button(const std::string &text, bool altStyle)
+		: Clickable(0), text_(text), altStyle_(altStyle) {};
+
+	void useAlternateStyle();
 
 	virtual void Draw(UIContext &dc);
 	virtual void GetContentDimensions(const UIContext &dc, float &w, float &h) const;
 	const std::string &GetText() const { return text_; }
 
 private:
+	bool altStyle_;
 	Style style_;
 	std::string text_;
 };
@@ -493,23 +503,27 @@ public:
 
 class ClickableItem : public Clickable {
 public:
-	ClickableItem(LayoutParams *layoutParams);
+	ClickableItem(LayoutParams *layoutParams, bool altStyle = false);
 	virtual void GetContentDimensions(const UIContext &dc, float &w, float &h) const;
+
+	void useAlternateStyle();
 
 	// Draws the item background.
 	virtual void Draw(UIContext &dc);
+private:
+	bool altStyle_;
 };
 
 // Use to trigger something or open a submenu screen.
 class Choice : public ClickableItem {
 public:
-	Choice(const std::string &text, LayoutParams *layoutParams = 0)
-		: ClickableItem(layoutParams), text_(text), smallText_(), atlasImage_(-1), selected_(false), centered_(false) {}
-	Choice(const std::string &text, const std::string &smallText, bool selected = false, LayoutParams *layoutParams = 0)
-		: ClickableItem(layoutParams), text_(text), smallText_(smallText), atlasImage_(-1), selected_(selected), centered_(false) {}
+	Choice(const std::string &text, LayoutParams *layoutParams = 0, bool altStyle = false)
+		: ClickableItem(layoutParams, altStyle), text_(text), smallText_(), atlasImage_(-1), selected_(false), centered_(false) {}
+	Choice(const std::string &text, const std::string &smallText, bool selected = false, LayoutParams *layoutParams = 0, bool altStyle = false)
+		: ClickableItem(layoutParams, altStyle), text_(text), smallText_(smallText), atlasImage_(-1), selected_(selected), centered_(false) {}
 	
-	Choice(ImageID image, LayoutParams *layoutParams = 0)
-		: ClickableItem(layoutParams), atlasImage_(image), selected_(false) {}
+	Choice(ImageID image, LayoutParams *layoutParams = 0, bool altStyle = false)
+		: ClickableItem(layoutParams, altStyle), atlasImage_(image), selected_(false) {}
 
 	virtual void GetContentDimensions(const UIContext &dc, float &w, float &h) const;
 	virtual void Draw(UIContext &dc);

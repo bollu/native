@@ -12,7 +12,8 @@ public class NativeRenderer implements GLSurfaceView.Renderer {
 	NativeActivity mActivity;
 	
 	NativeRenderer(NativeActivity act) {
-		mActivity = act;
+		mActivity = act; 
+		 
 	}
 	
 	public void onDrawFrame(GL10 unused /*use GLES20*/) {

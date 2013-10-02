@@ -268,14 +268,18 @@ void ClickableItem::GetContentDimensions(const UIContext &dc, float &w, float &h
 	h = 0.0f;
 }
 
-ClickableItem::ClickableItem(LayoutParams *layoutParams) : Clickable(layoutParams) {
+ClickableItem::ClickableItem(LayoutParams *layoutParams, bool altStyle) : Clickable(layoutParams), altStyle_(altStyle) {
 	if (layoutParams_->width == WRAP_CONTENT) 
 		layoutParams_->width = FILL_PARENT;
 	layoutParams_->height = ITEM_HEIGHT;
 }
+void ClickableItem::useAlternateStyle(){
+	this->altStyle_ = true;
+};
 
 void ClickableItem::Draw(UIContext &dc) {
-	Style style =	dc.theme->itemStyle;
+	Style style = altStyle_ ? dc.theme->itemStyleAlternate : dc.theme->itemStyle;
+
 	if (HasFocus()) {
 		style = dc.theme->itemFocusedStyle;
 	}
@@ -375,12 +379,18 @@ void CheckBox::Draw(UIContext &dc) {
 	dc.Draw()->DrawImage(image, bounds_.x2() - paddingX, bounds_.centerY(), 1.0f, style.fgColor, ALIGN_RIGHT | ALIGN_VCENTER);
 }
 
+
 void Button::GetContentDimensions(const UIContext &dc, float &w, float &h) const {
 	dc.MeasureText(dc.theme->uiFont, text_.c_str(), &w, &h);
 }
 
+void Button::useAlternateStyle(){
+	this->altStyle_ = true;
+};
+
 void Button::Draw(UIContext &dc) {
-	Style style = dc.theme->buttonStyle;
+	Style style = altStyle_ ? dc.theme->buttonStyleAlternate : dc.theme->buttonStyle;
+
 	if (HasFocus()) style = dc.theme->buttonFocusedStyle;
 	if (down_) style = dc.theme->buttonDownStyle;
 	if (!enabled_) style = dc.theme->buttonDisabledStyle;
